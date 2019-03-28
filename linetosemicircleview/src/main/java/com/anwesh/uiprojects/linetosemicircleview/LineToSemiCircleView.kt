@@ -21,6 +21,8 @@ val strokeFactor : Int = 90
 val sizeFactor : Float = 2.9f
 val foreColor : Int = Color.parseColor("#673AB7")
 val backColor : Int = Color.parseColor("#BDBDBD")
+val delay : Long = 20
+val lSizeFactor : Int = 5
 
 fun Int.inverse() : Float = 1f / this
 fun Float.maxScale(i : Int, n : Int) : Float = Math.max(0f, this - i * n.inverse())
@@ -28,6 +30,22 @@ fun Float.divideScale(i : Int, n : Int) : Float = Math.min(n.inverse(), maxScale
 fun Float.scaleFactor() : Float = Math.floor(this / scDiv).toFloat()
 fun Float.mirrorValue(a : Int, b : Int) : Float = (1 - scaleFactor()) * a.inverse() + scaleFactor() * b.inverse()
 fun Float.updateValue(dir : Float, a : Int, b : Int) : Float = mirrorValue(a, b) * dir * scGap
+fun Int.sjf() : Float = 1f - 2 * this
+
+fun Canvas.drawArrow(x : Float, sy : Float, dy : Float, size : Float, sc1 : Float, sc2 : Float, paint : Paint) {
+    val lSize : Float = size / lSizeFactor
+    save()
+    translate(x, sy + (dy - sy) * sc1)
+    drawLine(0f, 0f, size - lSize, 0f, paint)
+    for (j in 0..(lines - 1)) {
+        save()
+        translate(size, 0f)
+        rotate(45f * sc2.divideScale(j, lines))
+        drawLine(0f, 0f, -lSize, 0f, paint)
+        restore()
+    }
+    restore()
+}
 
 fun Canvas.drawLTSNode(i : Int, scale : Float, paint : Paint) {
     val w : Float = width.toFloat()
@@ -40,11 +58,12 @@ fun Canvas.drawLTSNode(i : Int, scale : Float, paint : Paint) {
     paint.style = Paint.Style.STROKE
     val sc1 : Float = scale.divideScale(0, 2)
     val sc2 : Float = scale.divideScale(1, 2)
+    drawArrow(0f, h, gap * (i + 1) - size, size, sc1, sc2, paint)
     save()
     translate(w / 2, gap * (i + 1))
     for (j in 0..(lines - 1)) {
         save()
-        rotate(-180f * sc1)
+        rotate(-180f * sc1 * j)
         translate(w / 2 * sc2.divideScale(j, lines), 0f)
         drawLine(0f, 0f, size, 0f, paint)
         restore()
@@ -97,7 +116,7 @@ class LineToSemiCircleView(ctx : Context) : View(ctx) {
             if (animated) {
                 cb()
                 try {
-                    Thread.sleep(50)
+                    Thread.sleep(delay)
                     view.invalidate()
                 } catch(ex : Exception) {
 
