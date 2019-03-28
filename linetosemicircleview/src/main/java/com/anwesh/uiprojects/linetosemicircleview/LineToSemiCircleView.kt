@@ -22,7 +22,7 @@ val sizeFactor : Float = 2.9f
 val foreColor : Int = Color.parseColor("#673AB7")
 val backColor : Int = Color.parseColor("#BDBDBD")
 val delay : Long = 20
-val lSizeFactor : Int = 5
+val lSizeFactor : Int = 4
 
 fun Int.inverse() : Float = 1f / this
 fun Float.maxScale(i : Int, n : Int) : Float = Math.max(0f, this - i * n.inverse())
@@ -36,11 +36,11 @@ fun Canvas.drawArrow(x : Float, sy : Float, dy : Float, size : Float, sc1 : Floa
     val lSize : Float = size / lSizeFactor
     save()
     translate(x, sy + (dy - sy) * sc1)
-    drawLine(0f, 0f, size - lSize, 0f, paint)
+    drawLine(0f, 0f, size, 0f, paint)
     for (j in 0..(lines - 1)) {
         save()
         translate(size, 0f)
-        rotate(45f * sc2.divideScale(j, lines))
+        rotate(75f * sc2.divideScale(j, lines) * j.sjf())
         drawLine(0f, 0f, -lSize, 0f, paint)
         restore()
     }
