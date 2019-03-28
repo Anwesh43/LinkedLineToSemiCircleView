@@ -184,4 +184,26 @@ class LineToSemiCircleView(ctx : Context) : View(ctx) {
             curr.startUpdating(cb)
         }
     }
+
+    data class Renderer(var view : LineToSemiCircleView) {
+
+        private val animator : Animator = Animator(view)
+        private val ltsc : LineToSemiCircle = LineToSemiCircle(0)
+
+        fun render(canvas : Canvas, paint : Paint) {
+            canvas.drawColor(backColor)
+            ltsc.draw(canvas, paint)
+            animator.animate {
+                ltsc.update {i, scl ->
+                    animator.stop()
+                }
+            }
+        }
+
+        fun handleTap() {
+            ltsc.startUpdating {
+                animator.start()
+            }
+        }
+    }
 }
