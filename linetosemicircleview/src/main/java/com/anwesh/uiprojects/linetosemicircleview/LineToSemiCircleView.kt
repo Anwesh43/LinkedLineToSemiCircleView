@@ -207,4 +207,11 @@ class LineToSemiCircleView(ctx : Context) : View(ctx) {
             }
         }
     }
+    companion object {
+        fun create(activity : Activity) : LineToSemiCircleView {
+            val view : LineToSemiCircleView = LineToSemiCircleView(activity)
+            activity.setContentView(view)
+            return view
+        }
+    }
 }
